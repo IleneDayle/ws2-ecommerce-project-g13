@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+
+    <body>
+        <h1><%= title %></h1>
+        <% if (users.length > 0) { %>
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+                <% users.forEach(user => { %>
+            <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td>
+                <a href="/users/edit/<%= user._id %>">Edit</a> |
+                <form action="/users/delete/<%= user._id %>" method="POST"
+
+                style="display:inline;">
+
+                <button type="submit">Delete</button>
+                </form>
+                </td>
+            </tr>
+            <% }) %>
+        </table>
+        <% } else { %>
+        <p>No users registered yet.</p>
+        <% } %>
+        <p><a href="/users/register">Register another user</a></p>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+
+    <body>
+        <h1>Edit User</h1>
+        <form action="/users/edit/<%= user._id %>" method="POST">
+            <label for="name">Name:</label><br>
+
+            <input type="text" name="name" value="<%= user.name %>" required><br><br>
+            <label for="email">Email:</label><br>
+            <input type="email" name="email" value="<%= user.email %>"
+            required><br><br>
+            <button type="submit">Update</button>
+        </form>
+    </body>
+</html>

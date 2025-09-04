@@ -48,5 +48,44 @@ router.post('/register', async (req, res) => {
         console.error("Error saving user:", err);
         res.send("Something went wrong.");
     }
+
+// Show login form
+    router.get('/login', (req, res) => {
+    res.render('login', { title: "Login" });
+    });
+// Handle login form submission
+    router.post('/login', async (req, res) => {
+    try {
+        const db = req.app.locals.client.db(req.app.locals.dbName);
+        const usersCollection = db.collection('users');
+
+// Find user by email
+        const user = await usersCollection.findOne({ email: req.body.email });
+            if (!user) return res.send("User not found.");
+            // Check if account is active
+            if (user.accountStatus !== 'active') return res.send("Account is not active.");
+
+// Compare hashed password
+        const isPasswordValid = await bcrypt.compare(req.body.password,
+        user.passwordHash);
+            if (isPasswordValid) {
+        // Store session
+                req.session.user = {
+                userId: user.userId,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role
+                };
+                res.redirect('/users/dashboard');
+            } else {
+                res.send("Invalid password.");
+            }
+            } catch (err) {
+                console.error("Error during login:", err);
+                res.send("Something went wrong.");
+            }
+            });
 });
+
 module.exports = router;

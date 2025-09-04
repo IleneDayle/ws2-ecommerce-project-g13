@@ -1,5 +1,6 @@
 <h1>Admin Dashboard</h1>
 <p>Welcome, <%= currentUser.firstName %> (<%= currentUser.role %>)</p>
+
 <table>
     <thead>
         <tr>
@@ -12,16 +13,23 @@
         </tr>
     </thead>
     <tbody>
-        <% users.forEach(user => { %>
-        <tr>
-            <td><%= user.userId %></td>
-            <td><%= user.firstName %> <%= user.lastName %></td>
-            <td><%= user.email %></td>
-            <td><%= user.role %></td>
-            <td><%= user.accountStatus %></td>
-            <td><%= user.createdAt.toLocaleDateString() %></td>
+        <% if (users && users.length > 0) { %>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.userId %></td>
+                    <td><%= user.firstName %> <%= user.lastName %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.role %></td>
+                    <td><%= user.accountStatus %></td>
+                    <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                </tr>
+            <% }) %>
+        <% } else { %>
+            <tr>
+                <td colspan="6">No users found.</td>
             </tr>
-        <% }) %>
+        <% } %>
     </tbody>
 </table>
+
 <p><a href="/users/dashboard">Back to Dashboard</a></p>

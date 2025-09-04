@@ -1,0 +1,13 @@
+<h1>Welcome, <%= user.firstName %> <%= user.lastName %>!</h1>
+<p><strong>User ID:</strong> <%= user.userId %></p>
+<p><strong>Email:</strong> <%= user.email %></p>
+<p><strong>Role:</strong> <%= user.role %></p>
+<p><strong>Status:</strong> Active</p>
+<ul>
+    <li><a href="#">Edit Profile</a></li>
+    <% if (user.role === 'admin') { %>
+
+    <li><a href="/users/admin">Admin Dashboard</a></li>
+    <% } %>
+</ul>
+<a href="/users/logout">Logout</a>

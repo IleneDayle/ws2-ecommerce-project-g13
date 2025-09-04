@@ -86,6 +86,31 @@ router.post('/register', async (req, res) => {
                 res.send("Something went wrong.");
             }
             });
+// Dashboard route
+        router.get('/dashboard', (req, res) => {
+            if (!req.session.user) return res.redirect('/users/login');
+            res.render('dashboard', { title: "User Dashboard", user: req.session.user });
+            });
+
+        // Logout
+            router.get('/logout', (req, res) => {
+            req.session.destroy();
+            res.redirect('/users/login');
+        });
+        
+// Admin view
+    router.get('/admin', async (req, res) => {
+        if (!req.session.user || req.session.user.role !== 'admin') {
+            return res.status(403).send("Access denied.");
+        }
+        const db = req.app.locals.client.db(req.app.locals.dbName);
+        const users = await db.collection('users').find().toArray();
+        res.render('admin', {
+            title: "Admin Dashboard",
+            users,
+            currentUser: req.session.user
+        });
+    });
 });
 
 module.exports = router;

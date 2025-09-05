@@ -23,43 +23,75 @@ router.post('/register', async (req, res) => {
     try {
         const db = req.app.locals.client.db(req.app.locals.dbName);
         const usersCollection = db.collection('users');
-        // Check if email already exists
-        const existingUser = await usersCollection.findOne({ email:
-        req.body.email });
+        // 1. Check if user already exists by email
+        const existingUser = await usersCollection.findOne({ email: req.body.email });
         if (existingUser) return res.send("User already exists with this email.");
-            // Hash password
+            // 2. Hash password
             const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
             const currentDate = new Date();
-            // Build new user object
+            // 3. Create verification token
+            const token = uuidv4();
+            // 4. Build new user object
             const newUser = {
-                userId: uuidv4(),
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: req.body.email,
-                passwordHash: hashedPassword,
-                role: 'customer', // default role
-                accountStatus: 'active',
-                isEmailVerified: false,
-                createdAt: currentDate,
-                updatedAt: currentDate
-            };
-
-    // Insert into MongoDB
-        await usersCollection.insertOne(newUser);
-        res.send(`
-        <h2>Registration Successful!</h2>
-        
-        <p>User ${newUser.firstName} ${newUser.lastName} registered with ID:
-        
-        ${newUser.userId}</p>
-        
-        <a href="/users/login">Proceed to Login</a>
-        `);
+            userId: uuidv4(), // unique ID for the user
+            firstName: req.body.firstName, // from form input
+            lastName: req.body.lastName,
+            email: req.body.email,
+            passwordHash: hashedPassword, // never store plain text password
+            role: 'customer', // default role
+            accountStatus: 'active',
+            isEmailVerified: false, // must be verified before login
+            verificationToken: token, // link user to verification
+            tokenExpiry: new Date(Date.now() + 3600000), // expires in 1 hour
+            createdAt: currentDate,
+            updatedAt: currentDate
+        };
+            // 5. Insert into database
+            await usersCollection.insertOne(newUser);
+            // 6. Simulated verification link
+            res.send(`
+            <h2>Registration Successful!</h2>
+            <p>Please verify your account before logging in.</p>
+            <p><a href="/users/verify/${token}">Click here to verify</a></p>
+            `);
     } catch (err) {
         console.error("Error saving user:", err);
         res.send("Something went wrong.");
+    }
+});
+
+// Email Verification Route
+router.get('/verify/:token', async (req, res) => {
+    try {
+        const db = req.app.locals.client.db(req.app.locals.dbName);
+        const usersCollection = db.collection('users');
+        // 1. Find user by token
+        const user = await usersCollection.findOne({ verificationToken: req.params.token });
+        // 2. Check if token exists
+        if (!user) {
+            return res.send("Invalid or expired verification link.");
         }
-    });
+        // 3. Check if token is still valid
+        if (user.tokenExpiry < new Date()) {
+            return res.send("Verification link has expired. Please register again.");
+        }
+        // 4. Update user as verified
+        await usersCollection.updateOne(
+        { verificationToken: req.params.token },
+        { $set: { isEmailVerified: true }, $unset: { verificationToken: "", tokenExpiry:
+
+        "" } }
+        );
+        res.send(`
+        <h2>Email Verified!</h2>
+        <p>Your account has been verified successfully.</p>
+        <a href="/users/login">Proceed to Login</a>
+        `);
+    } catch (err) {
+        console.error("Error verifying user:", err);
+        res.send("Something went wrong during verification.");
+    }
+});
 
 //Show all registered users
 router.get('/list', async (req, red) =>{
@@ -140,9 +172,12 @@ router.get('/login', (req, res) => {
         // Find user by email
         const user = await usersCollection.findOne({ email: req.body.email });
         if (!user) return res.send("User not found.");
-            // Check if account is active
-            if (user.accountStatus !== 'active') return res.send("Account is not active.");
-            // Compare hashed password
+        //Check if email is verified
+        if (!user.isEmailVerified) {
+                return res.send("Please verify your email before logging in.");}
+        // Check if account is active
+        if (user.accountStatus !== 'active') return res.send("Account is not active.");
+        // Compare hashed password
             const isPasswordValid = await bcrypt.compare(req.body.password,
             user.passwordHash);
                 if (isPasswordValid) {
@@ -152,7 +187,8 @@ router.get('/login', (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
-                    role: user.role
+                    role: user.role,
+                    isEmailVerified: user.isEmailVerified
                     };
                     res.redirect('/users/dashboard');
                     } else {

@@ -17,6 +17,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.2",
     "mongodb": "^6.19.0",
+    "node": "^20.19.5",
     "uuid": "^11.1.0"
   }
 }

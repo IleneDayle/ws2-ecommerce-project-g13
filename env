@@ -1,0 +1,5 @@
+MONGO_URI= 'mongodb+srv://20229113:password123321@e-commerce.tzpwuso.mongodb.net/?retryWrites=true&w=majority&appName=E-commerce'
+RESEND_API_KEY = 're_hhwpdXpm_HUkZwFpm7sJ9fQk3uugxwF1n'
+RESEND_FROM_EMAIL=onboarding@resend.dev # or your verified domain later
+BASE_URL='http://localhost:3000'
+BASE_URL='https://hellograde.onrender.com'

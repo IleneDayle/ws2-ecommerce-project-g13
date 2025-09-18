@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // MongoDB setup
 const uri = process.env.MONGO_URI;
@@ -75,13 +77,25 @@ router.get('/verify/:token', async (req, res) => {
         if (user.tokenExpiry < new Date()) {
             return res.send("Verification link has expired. Please register again.");
         }
+        // Send verification email using Resend
+        await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL,
+        to: newUser.email,
+        subject: 'Verify your account',
+        html: `
+        <h2>Welcome, ${newUser.firstName}!</h2>
+        <p>Thank you for registering. Please verify your email by clicking the link
+        below:</p>
+        <a href="${verificationUrl}">${verificationUrl}</a>
+        `
+        });
         // 4. Update user as verified
-        await usersCollection.updateOne(
-        { verificationToken: req.params.token },
-        { $set: { isEmailVerified: true }, $unset: { verificationToken: "", tokenExpiry:
+        //await usersCollection.updateOne(
+        //{ verificationToken: req.params.token },
+        //{ $set: { isEmailVerified: true }, $unset: { verificationToken: "", tokenExpiry:
 
-        "" } }
-        );
+        //"" } }
+        //);
         res.send(`
         <h2>Email Verified!</h2>
         <p>Your account has been verified successfully.</p>

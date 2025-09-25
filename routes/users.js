@@ -50,12 +50,29 @@ router.post('/register', async (req, res) => {
         };
             // 5. Insert into database
             await usersCollection.insertOne(newUser);
+
+            const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+            const verificationUrl = `${baseUrl}/users/verify/${token}`;
+
+            // Send verification email using Resend
+            await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL,
+            to: newUser.email,
+            subject: 'Verify your account',
+            html: `
+            <h2>Welcome, ${newUser.firstName}!</h2>
+            <p>Thank you for registering. Please verify your email by clicking the link
+            below:</p>
+            <a href="${verificationUrl}">${verificationUrl}</a>
+            `
+            });
             // 6. Simulated verification link
-            res.send(`
-            <h2>Registration Successful!</h2>
-            <p>Please verify your account before logging in.</p>
-            <p><a href="/users/verify/${token}">Click here to verify</a></p>
-            `);
+            //res.send(`
+            //<h2>Registration Successful!</h2>
+            //<p>Please verify your account before logging in.</p>
+            //<p><a href="/users/verify/${token}">Click here to verify</a></p>
+            //`);
+
     } catch (err) {
         console.error("Error saving user:", err);
         res.send("Something went wrong.");
@@ -77,25 +94,13 @@ router.get('/verify/:token', async (req, res) => {
         if (user.tokenExpiry < new Date()) {
             return res.send("Verification link has expired. Please register again.");
         }
-        // Send verification email using Resend
-        await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL,
-        to: newUser.email,
-        subject: 'Verify your account',
-        html: `
-        <h2>Welcome, ${newUser.firstName}!</h2>
-        <p>Thank you for registering. Please verify your email by clicking the link
-        below:</p>
-        <a href="${verificationUrl}">${verificationUrl}</a>
-        `
-        });
         // 4. Update user as verified
-        //await usersCollection.updateOne(
-        //{ verificationToken: req.params.token },
-        //{ $set: { isEmailVerified: true }, $unset: { verificationToken: "", tokenExpiry:
+        await usersCollection.updateOne(
+        { verificationToken: req.params.token },
+        { $set: { isEmailVerified: true }, $unset: { verificationToken: "", tokenExpiry:
 
-        //"" } }
-        //);
+        "" } }
+        );
         res.send(`
         <h2>Email Verified!</h2>
         <p>Your account has been verified successfully.</p>

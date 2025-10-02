@@ -13,10 +13,13 @@ app.set('view engine', 'ejs');
 
 // Session setup
 app.use(session({
-secret: process.env.SESSION_SECRET || 'dev-secret', // keep secret in .env
+secret: process.env.SESSION_SECRET || 'dev-secret',
 resave: false,
 saveUninitialized: false,
-cookie: { secure: false } // set true in production with HTTPS
+cookie: {
+    secure: false, // set to true only if using HTTPS
+    maxAge: 15 * 60 * 1000 // 15 minutes (in milliseconds)
+}
 }));
 
 // Routes

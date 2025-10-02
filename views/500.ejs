@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title><%= title %></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+        :root { --fg:#111; --muted:#666; --accent:#2563eb; }
+        body { font-family: system-ui, Arial, sans-serif; color: var(--fg);
+        display:flex; min-height:100dvh; }
+        .wrap { margin:auto; max-width:640px; padding:2rem;
+        text-align:center; }
+        h1 { font-size:2.25rem; margin:.25rem 0; }
+        p.lead { color:var(--muted); margin:.25rem 0 1rem; }
+        .links { display:flex; gap:.75rem; justify-content:center;
+        flex-wrap:wrap; margin-top:1rem; }
+        .links a { padding:.6rem .9rem; border:1px solid #ddd;
+        border-radius:.5rem; text-decoration:none; }
+        .links a.primary { border-color: var(--accent); color: white;
+        background: var(--accent); }
+
+        form.search { margin-top:1rem; display:flex; gap:.5rem;
+        justify-content:center; }
+        form.search input { padding:.6rem .8rem; min-width:16rem; border:1px
+        solid #ddd; border-radius:.5rem; }
+        form.search button { padding:.6rem .9rem; border:1px solid #ddd;
+        border-radius:.5rem; background:white; }
+        </style>
+    </head>
+
+    <body>
+        <main class="wrap" role="main" aria-labelledby="title">
+            <div aria-hidden="true" style="font-size:4rem">🧭</div>
+            <h1 id="title">Page not found</h1>
+            <p class="lead">Server Error: Please Try Again</p>
+            <div class="links">
+            <a class="primary" href="/">Go to Home</a>
+            <% if (user) { %>
+            <a href="/users/dashboard">Open Dashboard</a>
+            <a href="/users/logout">Logout</a>
+            <% } else { %>
+            <a href="/users/login">Login</a>
+            <a href="/users/register">Create Account</a>
+            <% } %>
+            </div>
+            <!-- optional: lightweight site search via query param -->
+            <form class="search" action="/search" method="GET">
+                <input type="text" name="q" placeholder="Search the site"
+                aria-label="Search" />
+                <button type="submit">Search</button>
+            </form>
+        </main>
+    </body>
+</html>

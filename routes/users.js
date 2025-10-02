@@ -255,3 +255,8 @@ router.get('/logout', (req, res) => {
         res.redirect('/users/login');
     });
 });
+
+// inside routes/users.js (at the end)
+router.use((req, res) => {
+    res.status(404).render('404', { title: 'Page Not Found' })
+})

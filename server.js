@@ -60,11 +60,6 @@ app.use((req, res, next) => {
 //health route
 app.get('/health', (req, res) => res.type('text').send('ok'))
 
-//test crash route
-app.get('/crash', () => {
-    throw new Error('Test crash');
-});
-
 // 3) Catch-all 404 (last)
 app.use((req, res, next) => {
     if (req.path.startsWith('/api/')) {

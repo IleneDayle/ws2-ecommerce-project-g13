@@ -1,5 +1,6 @@
 // server.js
 const express = require('express');
+const verifyTurnstile = require('./utils/turnstileVerify');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const session = require('express-session'); // Added for user sessions
@@ -42,6 +43,7 @@ const usersRoute = require('./routes/users');
 // 1) All routers and routes
 app.use('/', indexRoute)
 app.use('/users', usersRoute)
+
 const passwordRoute = require('./routes/password');
 app.use('/password', passwordRoute);
 
@@ -56,6 +58,10 @@ app.use((req, res, next) => {
     }
     next()
 })
+
+//app.get('/crash', () => {
+//throw new Error('Test crash');
+//});
 
 //health route
 app.get('/health', (req, res) => res.type('text').send('ok'))

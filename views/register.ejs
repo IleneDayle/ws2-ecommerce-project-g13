@@ -7,15 +7,19 @@
     <body>
         <h1>User Registration</h1>
         <form action="/users/register" method="POST">
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <label>Name</label>
+            <input type="text" name="name" required>
+            <label>Email</label>
+            <input type="email" name="email" required>
+            <label>Password</label>
+            <input type="password" name="password" required>
+            <!-- Turnstile widget -->
+            <div class="cf-turnstile"
+            data-sitekey="<%= process.env.TURNSTILE_SITEKEY %>"></div>
             <button type="submit">Register</button>
         </form>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async
+defer></script>
     </body>
 </html>

@@ -243,7 +243,7 @@ router.get('/admin', async (req, res) => {
     currentUser: req.session.user
         });
     });
-    module.exports = router;
+
 
 // Logout route
 router.get('/logout', (req, res) => {
@@ -260,3 +260,5 @@ router.get('/logout', (req, res) => {
 router.use((req, res) => {
     res.status(404).render('404', { title: 'Page Not Found' })
 })
+
+    module.exports = router;

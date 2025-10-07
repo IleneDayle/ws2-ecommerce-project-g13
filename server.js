@@ -57,6 +57,14 @@ app.use((req, res, next) => {
     next()
 })
 
+//health route
+app.get('/health', (req, res) => res.type('text').send('ok'))
+
+//test crash route
+app.get('/crash', () => {
+    throw new Error('Test crash');
+});
+
 // 3) Catch-all 404 (last)
 app.use((req, res, next) => {
     if (req.path.startsWith('/api/')) {
@@ -67,14 +75,14 @@ app.use((req, res, next) => {
     res.status(404).render('404', { title: 'Page Not Found' })
 })
 
-//health route
-app.get('/health', (req, res) => res.type('text').send('ok'))
-
-// Error handler (after the 404 is fine; Express will skip 404 for thrown errors)
+// 500 handler (last)
 app.use((err, req, res, next) => {
-    console.error(err)
-    res.status(500).render('500', { title: 'Server Error' })
-})
+    console.error(err.stack);
+    if (res.headersSent) return next(err);
+    res.status(500).render('500', { title: 'Server Error', req });
+});
+
+
 
 // MongoDB Setup
 const uri = process.env.MONGO_URI;

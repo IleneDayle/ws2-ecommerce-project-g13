@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | ONEJA POS</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #2d2d2d, #111);
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 240px;
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar h2 {
+      color: #d8b16f;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: rgba(216, 177, 111, 0.2);
+      color: #d8b16f;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      flex: 1;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #d8b16f;
+      font-size: 26px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(216, 177, 111, 0.4);
+    }
+
+    p { color: #ccc; margin-bottom: 25px; }
+
+    /* ===== TABLE STYLING ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.08);
+      color: #d8b16f;
+      letter-spacing: 1px;
+    }
+
+    tr:hover {
+      background: rgba(216, 177, 111, 0.1);
+      transition: 0.2s;
+    }
+
+    td { color: #eee; }
+
+    tr.resigned {
+      background: rgba(128, 128, 128, 0.2);
+      color: #aaa;
+    }
+
+    tr.resigned select,
+    tr.resigned button {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    button.update-btn,
+    button.archive-btn {
+      background: #d8b16f;
+      color: #111;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 600;
+      margin-right: 5px;
+    }
+
+    button.update-btn:hover,
+    button.archive-btn:hover {
+      background: #f7d98c;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      body { flex-direction: column; }
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #d8b16f;
+      color: #111;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div>
+      <h2>ONEJA POS</h2>
+      <a href="/users/dashboard" class="active">Dashboard</a>
+      <a href="/users/reports">Reports</a>
+      <a href="/users/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, <%= currentUser.firstName %> (<%= currentUser.role %>)</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (users && users.length > 0) { %>
+          <% users.forEach(user => { %>
+            <tr class="<%= user.accountStatus === 'Resigned' ? 'resigned' : '' %>">
+              <td><%= user.userId %></td>
+              <td><%= user.firstName %> <%= user.lastName %></td>
+              <td><%= user.email %></td>
+              <td>
+                <select
+                  id="role-<%= user._id %>"
+                  <%= user.accountStatus === 'Resigned' ? 'disabled' : '' %>
+                  style="background:#222; color:#fff; border:1px solid #555; border-radius:5px; padding:5px;"
+                >
+                  <option value="admin" style="background:#222; color:#fff;" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                  <option value="employee" style="background:#222; color:#fff;" <%= user.role === 'employee' ? 'selected' : '' %>>Employee</option>
+                </select>
+              </td>
+              <td><%= user.accountStatus %></td>
+              <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+              <td>
+                <button class="update-btn"
+                        onclick="updateRole('<%= user._id %>')"
+                        <%= user.accountStatus === 'Resigned' ? 'disabled' : '' %>>
+                        Update
+                </button>
+
+                <% if (user.role === 'employee' && user.accountStatus !== 'Resigned') { %>
+                  <button class="archive-btn" onclick="archiveEmployee('<%= user._id %>')">Archive</button>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" style="text-align:center; color:#bbb;">No users found.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="toast" class="toast">Action completed!</div>
+
+  <script>
+    async function updateRole(userId) {
+      const select = document.getElementById(`role-${userId}`);
+      const newRole = select.value;
+
+      const res = await fetch('/users/update-role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, newRole })
+      });
+
+      const data = await res.json();
+      showToast(data.message);
+      setTimeout(() => location.reload(), 1500);
+    }
+
+    async function archiveEmployee(userId) {
+      const res = await fetch('/users/archive-employee', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, newStatus: 'Resigned' })
+      });
+
+      const data = await res.json();
+      showToast(data.message);
+      setTimeout(() => location.reload(), 1500);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>

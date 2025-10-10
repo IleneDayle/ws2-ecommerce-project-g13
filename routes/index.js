@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Home route
 router.get('/', (req, res) => {
-res.render('index', { title: "Home Page", message: "Hello, MongoDB is connected!" });
+res.render('index', { title: "Home Page"});
 });
 
 module.exports = router;

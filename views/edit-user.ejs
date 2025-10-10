@@ -1,19 +1,103 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title><%= title %></title>
-    </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-    <body>
-        <h1>Edit User</h1>
-        <form action="/users/edit/<%= user._id %>" method="POST">
-            <label for="name">Name:</label><br>
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-            <input type="text" name="name" value="<%= user.name %>" required><br><br>
-            <label for="email">Email:</label><br>
-            <input type="email" name="email" value="<%= user.email %>"
-            required><br><br>
-            <button type="submit">Update</button>
-        </form>
-    </body>
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #333;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Edit User</h1>
+    <form action="/users/edit/<%= user._id %>" method="POST">
+      <label for="name">Name</label>
+      <input type="text" name="name" value="<%= user.name %>" required>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" value="<%= user.email %>" required>
+
+      <button type="submit">Update</button>
+    </form>
+    <a href="/users/list">← Back to User List</a>
+  </div>
+</body>
 </html>

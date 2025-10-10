@@ -1,25 +1,270 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title><%= title %></title>
-    </head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | Register - ONEJA POS</title>
+  <style>
+    /* ====== BACKGROUND ====== */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #2d2d2d, #111);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      overflow: hidden;
+      text-align: center;
+      padding: 0 20px;
+    }
 
-    <body>
-        <h1>User Registration</h1>
-        <form action="/users/register" method="POST">
-            <label>Name</label>
-            <input type="text" name="name" required>
-            <label>Email</label>
-            <input type="email" name="email" required>
-            <label>Password</label>
-            <input type="password" name="password" required>
-            <!-- Turnstile widget -->
-            <div class="cf-turnstile"
-            data-sitekey="<%= process.env.TURNSTILE_SITEKEY %>"></div>
-            <button type="submit">Register</button>
-        </form>
+    /* ====== FLOATING PARTICLES ====== */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async
-defer></script>
-    </body>
+    .particle {
+      position: absolute;
+      background-color: rgba(255, 215, 0, 0.7);
+      border-radius: 50%;
+      animation: float 5s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0.3; }
+      40% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ====== CONTAINER ====== */
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 45px 55px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.15);
+      animation: fadeIn 1s ease-out;
+    }
+
+    .logo {
+      width: 140px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.25));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    h1 {
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: #d8b16f;
+      margin: 8px 0;
+      text-transform: uppercase;
+      text-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+      animation: fadeIn 1.2s ease;
+    }
+
+    h2 {
+      font-size: 26px;
+      color: #fff;
+      margin: 8px 0 20px 0;
+      letter-spacing: 3px;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+      animation: fadeInUp 1.2s ease;
+    }
+
+    /* ====== FORM ====== */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+      animation: fadeInUp 1s ease;
+    }
+
+    .name-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .name-group input {
+      flex: 1;
+    }
+
+    label {
+      font-size: 14px;
+      color: #d8b16f;
+      letter-spacing: 1px;
+      margin-bottom: -4px;
+    }
+
+    input {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(216, 177, 111, 0.5);
+    }
+
+    /* ====== BUTTON ====== */
+    button[type="submit"] {
+      margin-top: 8px;
+      background: linear-gradient(135deg, #d8b16f, #f7d98c);
+      color: #111;
+      border: none;
+      padding: 12px 0;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 18px rgba(216, 177, 111, 0.3);
+    }
+
+    button[type="submit"]:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 25px rgba(216, 177, 111, 0.6);
+    }
+
+    /* ====== LINKS ====== */
+    p {
+      font-size: 13px;
+      margin-top: 15px;
+      color: #bbb;
+      text-align: center;
+    }
+
+    a {
+      color: #d8b16f;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    a:hover {
+      color: #fff;
+    }
+
+    /* ====== FOOTER ====== */
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 1px;
+      text-align: center;
+      width: 100%;
+      animation: fadeIn 1.5s ease;
+    }
+
+    /* ====== RESPONSIVE ====== */
+    @media (max-width: 600px) {
+      .container {
+        padding: 35px 25px;
+        max-width: 90%;
+      }
+      .logo { width: 120px; }
+      h2 { font-size: 22px; }
+      button[type="submit"] { padding: 10px 0; font-size: 14px; }
+      .name-group { flex-direction: column; }
+    }
+
+    /* ====== ANIMATIONS ====== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="particles" id="particles"></div>
+
+  <div class="container">
+    <img src="/images/logo.png" alt="One Jewelry Art Logo" class="logo" />
+    <h1>ONE JEWELRY ART</h1>
+    <h2>Register</h2>
+
+    <form action="/users/register" method="POST">
+      <label>Employee Name</label>
+      <div class="name-group">
+        <input type="text" name="firstName" required placeholder="First name" />
+        <input type="text" name="lastName" required placeholder="Last name" />
+      </div>
+
+      <label>Email</label>
+      <input type="email" name="email" required placeholder="you@example.com" />
+
+      <label>Password</label>
+      <input 
+        type="password" 
+        name="password" 
+        required
+        minlength="8"
+        pattern='^(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$'
+        title="Password must be at least 8 characters long and include at least one special character."
+        placeholder="Enter your password"
+      />
+
+      <!-- Turnstile widget -->
+      <div class="cf-turnstile" data-sitekey="<%= process.env.TURNSTILE_SITEKEY %>"></div>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="/users/login">Login here</a></p>
+  </div>
+
+  <footer>© 2025 One Jewelry Art | Specially Made For You</footer>
+
+  <!-- Turnstile script -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <script>
+    // Faster particle effect
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 15; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      const size = Math.random() * 4 + 2 + 'px';
+      p.style.width = size;
+      p.style.height = size;
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      p.style.animationDelay = Math.random() * 3 + 's';
+      particlesContainer.appendChild(p);
+    }
+  </script>
+</body>
 </html>

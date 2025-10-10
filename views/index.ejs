@@ -1,13 +1,208 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | ONEJA POS</title>
+  <style>
+    /* ====== BODY / BACKGROUND ====== */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #2d2d2d, #111);
+      color: #fff;
+      font-family: 'Cinzel', serif;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    /* ====== BACKGROUND PARTICLES ====== */
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      background-color: rgba(255, 215, 0, 0.7);
+      border-radius: 50%;
+      animation: float 8s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0); opacity: 0.2; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ====== CENTER CONTAINER ====== */
+    .container {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 50px 60px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+      animation: fadeIn 2s ease;
+    }
+
+    /* ====== LOGO ====== */
+    .logo {
+      width: 160px;
+      height: auto;
+      margin-bottom: 25px;
+      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.3));
+      animation: floatLogo 4s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ====== HEADINGS ====== */
+    h1 {
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: #d8b16f;
+      margin: 8px 0;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+      animation: fadeInDown 1.8s ease;
+    }
+
+    h2 {
+      font-size: 32px;
+      letter-spacing: 5px;
+      color: #fff;
+      margin: 10px 0 35px 0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      animation: fadeInUp 2s ease;
+    }
+
+    /* ====== BUTTON ====== */
+    .btn {
+      background: linear-gradient(135deg, #d8b16f, #f7d98c);
+      color: #111;
+      border: none;
+      padding: 12px 45px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.4s ease;
+      box-shadow: 0 0 20px rgba(216, 177, 111, 0.3);
+      animation: fadeInUp 2.3s ease;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(216, 177, 111, 0.6);
+    }
+
+    /* ====== FOOTER ====== */
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 11px;
+      color: #aaa;
+      letter-spacing: 1px;
+      animation: fadeIn 3s ease;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* ====== RESPONSIVE DESIGN ====== */
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 25px;
+        max-width: 90%;
+      }
+
+      .logo {
+        width: 130px;
+      }
+
+      h1 {
+        font-size: 16px;
+        letter-spacing: 2px;
+      }
+
+      h2 {
+        font-size: 26px;
+        letter-spacing: 3px;
+        margin-bottom: 30px;
+      }
+
+      .btn {
+        padding: 10px 35px;
+        font-size: 15px;
+      }
+    }
+
+    /* ====== ANIMATIONS ====== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 
 <body>
-    <h1><%= message %></h1>
-    <p>Welcome to your WS2 E-commerce Project!</p>
-</body>
+  <!-- animated gold particles -->
+  <div class="particles" id="particles"></div>
 
+  <div class="container">
+    <img src="/images/logo.png" alt="One Jewelry Art Logo" class="logo">
+    <h1>ONE JEWELRY ART</h1>
+    <h2>ONEJA POS</h2>
+    <a href="/users/login" class="btn">Sign In</a>
+  </div>
+
+  <footer>© 2025 One Jewelry Art | Specially Made For You</footer>
+
+  <script>
+    // === Create floating gold particles ===
+    const particlesContainer = document.getElementById('particles');
+    const numParticles = 20;
+
+    for (let i = 0; i < numParticles; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      const size = Math.random() * 6 + 2 + 'px';
+      particle.style.width = size;
+      particle.style.height = size;
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      particle.style.animationDelay = Math.random() * 5 + 's';
+      particlesContainer.appendChild(particle);
+    }
+  </script>
+</body>
 </html>

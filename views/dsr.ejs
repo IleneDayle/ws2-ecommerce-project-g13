@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | ONEJA POS</title>
+  <style>
+    body { font-family: 'Poppins', sans-serif; background: radial-gradient(circle at top, #2d2d2d, #111); color: #fff; display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: rgba(255,255,255,0.05); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
+    .sidebar a { color: #fff; text-decoration: none; margin: 10px 0; padding: 10px 15px; border-radius: 8px; display: block; transition: 0.3s; }
+    .sidebar a:hover { color: #d8b16f; background: rgba(216,177,111,0.2); }
+    .main { flex: 1; padding: 40px; }
+    h1 { color: #d8b16f; margin-bottom: 20px; }
+    .report-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-top: 15px; }
+    .report-box h2 { color: #fff; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div>
+      <h2>ONEJA POS</h2>
+      <a href="/users/dashboard">Dashboard</a>
+      <a href="/users/profile">Profile</a>
+      <a href="/users/custom">Custom Jewelry</a>
+      <a href="/users/orderhistory">Order History</a>
+      <a href="/users/dsr">Daily Sales Report</a>
+    </div>
+    <div>
+      <a href="/users/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <h1>Daily Sales Report</h1>
+    <div class="report-box">
+      <h2>Total Orders Today: <%= report.totalOrders %></h2>
+      <h2>Total Sales Today: ₱<%= report.totalSales.toLocaleString() %></h2>
+    </div>
+  </div>
+</body>
+</html>

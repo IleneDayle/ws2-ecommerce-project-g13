@@ -1,35 +1,42 @@
-<h1>Admin Dashboard</h1>
-<p>Welcome, <%= currentUser.firstName %> (<%= currentUser.role %>)</p>
+<div class="main">
+    <h1><%= isAdmin ? 'Admin Dashboard' : 'User Dashboard' %></h1>
+    <p>Welcome, <%= currentUser.firstName %> (<%= currentUser.role %>)</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Created</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% if (users && users.length > 0) { %>
-            <% users.forEach(user => { %>
+    <% if (isAdmin) { %>
+        <table>
+            <thead>
                 <tr>
-                    <td><%= user.userId %></td>
-                    <td><%= user.firstName %> <%= user.lastName %></td>
-                    <td><%= user.email %></td>
-                    <td><%= user.role %></td>
-                    <td><%= user.accountStatus %></td>
-                    <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
                 </tr>
-            <% }) %>
-        <% } else { %>
-            <tr>
-                <td colspan="6">No users found.</td>
-            </tr>
-        <% } %>
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                <% if (users && users.length > 0) { %>
+                    <% users.forEach(user => { %>
+                        <tr>
+                            <td><%= user.userId %></td>
+                            <td><%= user.firstName %> <%= user.lastName %></td>
+                            <td><%= user.email %></td>
+                            <td><%= user.role %></td>
+                            <td><%= user.accountStatus %></td>
+                            <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6">No users found.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>Here is your account summary and recent activity...</p>
+        <!-- You can add user-specific content here -->
+    <% } %>
 
-<p><a href="/users/dashboard">Back to Dashboard</a></p>
+    <a href="/users/dashboard" class="button">Back to Dashboard</a>
+</div>

@@ -1,17 +1,289 @@
-<h1>Welcome, <%= user.firstName %> <%= user.lastName %>!</h1>
-<p><strong>User ID:</strong> <%= user.userId %></p>
-<p><strong>Email:</strong> <%= user.email %></p>
-<p><strong>Role:</strong> <%= user.role %></p>
-<p><strong>Status:</strong> Active</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | ONEJA POS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<p><strong>Email Verified:</strong> <%= user.isEmailVerified == true || user.isEmailVerified === "true" ? "Yes" : "No" %></p>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top, #2d2d2d, #111);
+      color: #fff;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 240px;
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
 
-<ul>
-    <li><a href="#">Edit Profile</a></li>
-    <% if (user.role === 'admin') { %>
-        <li><a href="/users/admin">Admin Dashboard</a></li>
-    <% } %>
-</ul>
+    .sidebar h2 {
+      color: #d8b16f;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-<a href="/users/logout">Logout</a>
+    .sidebar a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: rgba(216, 177, 111, 0.2);
+      color: #d8b16f;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main {
+      flex: 1;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #d8b16f;
+      font-size: 26px;
+      letter-spacing: 2px;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(216, 177, 111, 0.4);
+    }
+
+    /* ===== PRODUCT GRID ===== */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+    }
+
+    .product-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.3s;
+    }
+
+    .product-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 15px rgba(216, 177, 111, 0.3);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .product-card h3 {
+      margin: 10px 0 5px;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .product-card p {
+      color: #d8b16f;
+      margin-bottom: 10px;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #d8b16f, #f7d98c);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 30px;
+      color: #111;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    .add-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(216, 177, 111, 0.4);
+    }
+
+    /* ===== CART SIDEBAR ===== */
+    .cart {
+      width: 320px;
+      background: rgba(255, 255, 255, 0.07);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      padding: 25px;
+      position: relative;
+    }
+
+    .cart h2 {
+      text-align: center;
+      color: #d8b16f;
+      font-size: 18px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .cart-items {
+      max-height: 60vh;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 8px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px 0;
+      background: linear-gradient(135deg, #d8b16f, #f7d98c);
+      border: none;
+      border-radius: 50px;
+      color: #111;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(216, 177, 111, 0.5);
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+      body {
+        flex-direction: column;
+      }
+      .cart {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div>
+      <h2>ONEJA POS</h2>
+      <a href="/users/dashboard">Dashboard</a>
+      <a href="/users/profile">Profile</a>
+      <a href="/users/custom">Custom Jewelry</a>
+      <a href="/users/orderhistory">Order History</a>
+      <a href="/users/dsr">Daily Sales Report</a>
+    </div>
+    <div>
+      <a href="/users/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <h1>Jewelry Collection</h1>
+    <div class="product-grid" id="productGrid">
+      <% const products = [
+        { name: "Wedding Ring Set 1", price: 13000, img: "/images/wr1.jpg" },
+        { name: "Wedding Ring Set 2", price: 10000, img: "/images/wr2.jpg" },
+        { name: "Wedding Ring Set 3", price: 15000, img: "/images/wr3.jpg" },
+        { name: "Wedding Ring Set 4", price: 9000, img: "/images/wr4.jpg" }
+      ]; %>
+
+      <% products.forEach(p => { %>
+        <div class="product-card">
+          <img src="<%= p.img %>" alt="<%= p.name %>">
+          <h3><%= p.name %></h3>
+          <p>₱<%= p.price.toLocaleString() %></p>
+          <button class="add-btn" data-name="<%= p.name %>" data-price="<%= p.price %>">
+            Add to Cart
+          </button>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart">
+    <h2>🛍 Your Cart</h2>
+    <div class="cart-items" id="cartItems"></div>
+    <h3>Total: ₱<span id="cartTotal">0</span></h3>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+  </div>
+
+  <script>
+    const cart = [];
+    const cartItemsEl = document.getElementById("cartItems");
+    const cartTotalEl = document.getElementById("cartTotal");
+
+    document.querySelectorAll(".add-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const name = btn.dataset.name;
+        const price = parseFloat(btn.dataset.price);
+        addToCart(name, price);
+      });
+    });
+
+    function addToCart(name, price) {
+      const existingItem = cart.find(item => item.name === name);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ name, price, quantity: 1 });
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.quantity;
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.innerHTML = `
+          <span>${item.name} x ${item.quantity}</span>
+          <span>₱${(item.price * item.quantity).toLocaleString()}</span>
+        `;
+        cartItemsEl.appendChild(div);
+      });
+      cartTotalEl.textContent = total.toLocaleString();
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      alert("Checkout successful! Thank you for your purchase 💎");
+      cart.length = 0;
+      renderCart();
+    }
+  </script>
+</body>
+</html>

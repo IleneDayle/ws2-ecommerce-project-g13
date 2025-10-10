@@ -127,15 +127,12 @@ router.post('/login', async (req, res) => {
     };
 
     // Redirect based on role
-    switch (user.role.toLowerCase()) {
-      case 'admin':
-        res.redirect('/users/admin-dashboard');
-        break;
-      case 'employee':
-        res.redirect('/users/emp-dashboard');
-        break;
-      default:
-        res.redirect('/users/dashboard');
+    if (user.role.toLowerCase() === 'admin') {
+      return res.redirect('/users/adminDashboard');
+    } else if (user.role.toLowerCase() === 'employee') {
+      return res.redirect('/users/emp-dashboard');
+    } else {
+      return res.redirect('/users/dashboard');
     }
   } catch (err) {
     console.error("Error during login:", err);
@@ -167,11 +164,11 @@ router.get('/emp-dashboard', (req, res) => {
 });
 
 // ----- Admin -----
-router.get('/admin-dashboard', (req, res) => {
+router.get('/adminDashboard', (req, res) => {
   if (!req.session.user || req.session.user.role.toLowerCase() !== 'admin') {
     return res.status(403).send("Access denied.");
   }
-  res.render('admin-dashboard', { title: 'Admin Dashboard | ONEJA POS', currentUser: req.session.user });
+  res.render('adminDashboard', { title: 'Admin Dashboard | ONEJA POS', currentUser: req.session.user });
 });
 
 // ---------- Sidebar Pages ----------
@@ -235,18 +232,5 @@ router.post('/archive-employee', async (req, res) => {
 router.use((req, res) => {
   res.status(404).render('404', { title: 'Page Not Found' });
 });
-
-router.get('/profile', (req, res) => {
-  res.render('profile', { title: 'Profile | ONEJA POS', currentUser: req.session.user });
-});
-
-router.get('/orderhistory', (req, res) => {
-  res.render('orderhistory', { title: 'Order History | ONEJA POS', currentUser: req.session.user });
-});
-
-router.get('/dsr', (req, res) => {
-  res.render('dsr', { title: 'Daily Sales Report | ONEJA POS', currentUser: req.session.user });
-});
-
 
 module.exports = router;

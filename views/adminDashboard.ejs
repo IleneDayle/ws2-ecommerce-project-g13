@@ -179,43 +179,22 @@
         </tr>
       </thead>
       <tbody>
-        <% if (users && users.length > 0) { %>
-          <% users.forEach(user => { %>
-            <tr class="<%= user.accountStatus === 'Resigned' ? 'resigned' : '' %>">
-              <td><%= user.userId %></td>
-              <td><%= user.firstName %> <%= user.lastName %></td>
-              <td><%= user.email %></td>
-              <td>
-                <select
-                  id="role-<%= user._id %>"
-                  <%= user.accountStatus === 'Resigned' ? 'disabled' : '' %>
-                  style="background:#222; color:#fff; border:1px solid #555; border-radius:5px; padding:5px;"
-                >
-                  <option value="admin" style="background:#222; color:#fff;" <%= user.role === 'admin' ? 'selected' : '' %>>Admin</option>
-                  <option value="employee" style="background:#222; color:#fff;" <%= user.role === 'employee' ? 'selected' : '' %>>Employee</option>
-                </select>
-              </td>
-              <td><%= user.accountStatus %></td>
-              <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
-              <td>
-                <button class="update-btn"
-                        onclick="updateRole('<%= user._id %>')"
-                        <%= user.accountStatus === 'Resigned' ? 'disabled' : '' %>>
-                        Update
-                </button>
+  <% if (typeof users !== 'undefined' && users.length > 0) { %>
+    <% users.forEach(user => { %>
+      <tr>
+        <td><%= user.userId %></td>
+        <td><%= user.firstName %> <%= user.lastName %></td>
+        <td><%= user.email %></td>
+        <td><%= user.role %></td>
+        <td><%= user.accountStatus %></td>
+        <td><%= user.createdAt ? new Date(user.createdAt).toLocaleString() : '' %></td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr><td colspan="6">No users found.</td></tr>
+  <% } %>
+</tbody>
 
-                <% if (user.role === 'employee' && user.accountStatus !== 'Resigned') { %>
-                  <button class="archive-btn" onclick="archiveEmployee('<%= user._id %>')">Archive</button>
-                <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        <% } else { %>
-          <tr>
-            <td colspan="7" style="text-align:center; color:#bbb;">No users found.</td>
-          </tr>
-        <% } %>
-      </tbody>
     </table>
   </div>
 
